@@ -5,6 +5,8 @@
  */
 package restaurantetorteli;
 
+import Log.Log;
+
 /**
  *
  * @author User
@@ -16,6 +18,10 @@ public class RestauranteTorteli {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        
+        Log login = new Log();
+        
+       login.setVisible(true);
     }
     
 }
