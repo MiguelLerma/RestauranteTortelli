@@ -21,25 +21,26 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "empleado")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e")
-    , @NamedQuery(name = "Empleado.findByTipoempleado", query = "SELECT e FROM Empleado e WHERE e.tipoempleado = :tipoempleado")
-    , @NamedQuery(name = "Empleado.findByIdempleado", query = "SELECT e FROM Empleado e WHERE e.idempleado = :idempleado")
-    , @NamedQuery(name = "Empleado.findByCargo", query = "SELECT e FROM Empleado e WHERE e.cargo = :cargo")
-    , @NamedQuery(name = "Empleado.findByHorario", query = "SELECT e FROM Empleado e WHERE e.horario = :horario")
-    , @NamedQuery(name = "Empleado.findByFoto", query = "SELECT e FROM Empleado e WHERE e.foto = :foto")
-    , @NamedQuery(name = "Empleado.findByDireccion", query = "SELECT e FROM Empleado e WHERE e.direccion = :direccion")
-    , @NamedQuery(name = "Empleado.findByCedula", query = "SELECT e FROM Empleado e WHERE e.cedula = :cedula")
-    , @NamedQuery(name = "Empleado.findByTelefono", query = "SELECT e FROM Empleado e WHERE e.telefono = :telefono")
-    , @NamedQuery(name = "Empleado.findByCorreo", query = "SELECT e FROM Empleado e WHERE e.correo = :correo")
-    , @NamedQuery(name = "Empleado.findByPin", query = "SELECT e FROM Empleado e WHERE e.pin = :pin")})
+    @NamedQuery(name = "Empleado.findAll", query = "SELECT e FROM Empleado e"),
+    @NamedQuery(name = "Empleado.findByTipoempleado", query = "SELECT e FROM Empleado e WHERE e.tipoempleado = :tipoempleado"),
+    @NamedQuery(name = "Empleado.findByIdempleado", query = "SELECT e FROM Empleado e WHERE e.idempleado = :idempleado"),
+    @NamedQuery(name = "Empleado.findByCargo", query = "SELECT e FROM Empleado e WHERE e.cargo = :cargo"),
+    @NamedQuery(name = "Empleado.findByHorario", query = "SELECT e FROM Empleado e WHERE e.horario = :horario"),
+    @NamedQuery(name = "Empleado.findByFoto", query = "SELECT e FROM Empleado e WHERE e.foto = :foto"),
+    @NamedQuery(name = "Empleado.findByDireccion", query = "SELECT e FROM Empleado e WHERE e.direccion = :direccion"),
+    @NamedQuery(name = "Empleado.findByTelefono", query = "SELECT e FROM Empleado e WHERE e.telefono = :telefono"),
+    @NamedQuery(name = "Empleado.findByCorreo", query = "SELECT e FROM Empleado e WHERE e.correo = :correo"),
+    @NamedQuery(name = "Empleado.findByPin", query = "SELECT e FROM Empleado e WHERE e.pin = :pin"),
+    @NamedQuery(name = "Empleado.findByNombre", query = "SELECT e FROM Empleado e WHERE e.nombre = :nombre"),
+    @NamedQuery(name = "Empleado.findByApellido", query = "SELECT e FROM Empleado e WHERE e.apellido = :apellido"),
+    @NamedQuery(name = "Empleado.findByTipoDocumento", query = "SELECT e FROM Empleado e WHERE e.tipoDocumento = :tipoDocumento")})
 public class Empleado implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
     @Column(name = "tipoempleado")
@@ -61,9 +62,6 @@ public class Empleado implements Serializable {
     @Column(name = "direccion")
     private String direccion;
     @Basic(optional = false)
-    @Column(name = "cedula")
-    private String cedula;
-    @Basic(optional = false)
     @Column(name = "telefono")
     private String telefono;
     @Basic(optional = false)
@@ -72,6 +70,15 @@ public class Empleado implements Serializable {
     @Basic(optional = false)
     @Column(name = "pin")
     private String pin;
+    @Basic(optional = false)
+    @Column(name = "nombre")
+    private String nombre;
+    @Basic(optional = false)
+    @Column(name = "apellido")
+    private String apellido;
+    @Basic(optional = false)
+    @Column(name = "tipo_documento")
+    private String tipoDocumento;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "empleadoIdempleado")
     private Collection<Pedido> pedidoCollection;
 
@@ -82,17 +89,19 @@ public class Empleado implements Serializable {
         this.idempleado = idempleado;
     }
 
-    public Empleado(Integer idempleado, String tipoempleado, String cargo, String horario, String foto, String direccion, String cedula, String telefono, String correo, String pin) {
+    public Empleado(Integer idempleado, String tipoempleado, String cargo, String horario, String foto, String direccion, String telefono, String correo, String pin, String nombre, String apellido, String tipoDocumento) {
         this.idempleado = idempleado;
         this.tipoempleado = tipoempleado;
         this.cargo = cargo;
         this.horario = horario;
         this.foto = foto;
         this.direccion = direccion;
-        this.cedula = cedula;
         this.telefono = telefono;
         this.correo = correo;
         this.pin = pin;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.tipoDocumento = tipoDocumento;
     }
 
     public String getTipoempleado() {
@@ -143,14 +152,6 @@ public class Empleado implements Serializable {
         this.direccion = direccion;
     }
 
-    public String getCedula() {
-        return cedula;
-    }
-
-    public void setCedula(String cedula) {
-        this.cedula = cedula;
-    }
-
     public String getTelefono() {
         return telefono;
     }
@@ -173,6 +174,30 @@ public class Empleado implements Serializable {
 
     public void setPin(String pin) {
         this.pin = pin;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+
+    public String getApellido() {
+        return apellido;
+    }
+
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
+
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
     }
 
     @XmlTransient

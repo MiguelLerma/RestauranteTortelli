@@ -5,13 +5,23 @@
  */
 package Interfaz;
 
-import JPAController.EmpleadoJpaController;
+import JPAControl.EmpleadoJpaController;
+import JPAControl.FacturaJpaController;
+import JPAControl.exceptions.IllegalOrphanException;
+import JPAControl.exceptions.NonexistentEntityException;
 import Log.EncriptarC;
+import Log.Log;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -19,9 +29,15 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import org.apache.commons.codec.binary.Base64;
 import restaurantetorteli.Empleado;
+import restaurantetorteli.Factura;
+import restaurantetorteli.ProductosFactura;
+import restaurantetorteli.RenderTabla;
+import Interfaz.Reportes;
 
 
 /**
@@ -32,18 +48,39 @@ public class Gerente extends javax.swing.JFrame {
 
     
     String imagenGlobal = "";
-    
-  
+    String[] tiposDoc = new String[3];
+        String[] items = new String[3];
+
+   int idFactura = 0;
+     ArrayList<Empleado> listaEmpleados = new ArrayList<>();
+   
+     int idEmpleadoSeleccionado = 0 ;
     /**
      * Creates new form Gerente
      */
-    public Gerente() {
+    public Gerente(int idUsuario,int editarEmpleado) {
         initComponents();
         
-          String[] items = {"Gerente", "Mesero", "Cajero"};
- 
+            tiposDoc[0] = "Cedula";
+            tiposDoc[1] = "TI";
+            tiposDoc[2] = "Registro Civil";
+            
+             items[0] = "Gerente";
+            items[1] = "Mesero";
+            items[2] = "Cajero";
         comboCargos.setModel(new javax.swing.DefaultComboBoxModel(items));
+        comboDocumentos.setModel(new javax.swing.DefaultComboBoxModel(tiposDoc));
+comboCargos1.setModel(new javax.swing.DefaultComboBoxModel(items));
+        comboDocumentos1.setModel(new javax.swing.DefaultComboBoxModel(tiposDoc));
 
+        
+        if(editarEmpleado != 0){
+            
+            editarOtroEmpleado(editarEmpleado);
+                            this.setVisible(false);
+
+        }
+        
     }
 
     /**
@@ -58,7 +95,7 @@ public class Gerente extends javax.swing.JFrame {
         ventanaCrearEmpleado = new javax.swing.JFrame();
         jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        ETusuarioEmpleado = new javax.swing.JTextField();
+        TFnombre = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         ETemailEmpleado = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
@@ -75,70 +112,131 @@ public class Gerente extends javax.swing.JFrame {
         botonImagenUsuario = new javax.swing.JButton();
         imagenLabel = new javax.swing.JLabel();
         comboCargos = new javax.swing.JComboBox();
+        ETusuarioEmpleado = new javax.swing.JTextField();
+        jLabel10 = new javax.swing.JLabel();
+        jLabel11 = new javax.swing.JLabel();
+        jLabel13 = new javax.swing.JLabel();
+        TFapellido = new javax.swing.JTextField();
+        comboDocumentos = new javax.swing.JComboBox();
+        jLabel14 = new javax.swing.JLabel();
+        jLabel26 = new javax.swing.JLabel();
+        ventanaModificarEmpleado = new javax.swing.JFrame();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel12 = new javax.swing.JLabel();
+        TFnombre1 = new javax.swing.JTextField();
+        ETemailEmpleado1 = new javax.swing.JTextField();
+        jLabel15 = new javax.swing.JLabel();
+        jLabel16 = new javax.swing.JLabel();
+        ETtelefonoEmpleado1 = new javax.swing.JTextField();
+        jLabel17 = new javax.swing.JLabel();
+        jLabel18 = new javax.swing.JLabel();
+        ETdireccionEmpleado1 = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        EThorarioEmpleado1 = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        jButton2 = new javax.swing.JButton();
+        botonImagenUsuario1 = new javax.swing.JButton();
+        imagenLabel1 = new javax.swing.JLabel();
+        comboCargos1 = new javax.swing.JComboBox();
+        jLabel22 = new javax.swing.JLabel();
+        jLabel23 = new javax.swing.JLabel();
+        TFapellido1 = new javax.swing.JTextField();
+        comboDocumentos1 = new javax.swing.JComboBox();
+        jLabel21 = new javax.swing.JLabel();
+        jLabel27 = new javax.swing.JLabel();
+        ventanaSeleccionarEmpleado = new javax.swing.JFrame();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaEmpleados = new javax.swing.JTable();
+        botonModificarEmpleado = new javax.swing.JButton();
+        botonEliminarEmpleado = new javax.swing.JButton();
+        jLabel24 = new javax.swing.JLabel();
+        jLabel28 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         botonCrearEmpleado = new javax.swing.JButton();
+        botonModificarEmple = new javax.swing.JButton();
+        botonmodificarCarta = new javax.swing.JButton();
+        cerrarSesionbuton = new javax.swing.JButton();
+        Reportes = new javax.swing.JButton();
+        jLabel25 = new javax.swing.JLabel();
 
-        jPanel1.setBackground(new java.awt.Color(255, 255, 204));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setText("ID Usuario");
+        jLabel2.setText("Nombre");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 148, -1, -1));
 
-        ETusuarioEmpleado.addActionListener(new java.awt.event.ActionListener() {
+        TFnombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ETusuarioEmpleadoActionPerformed(evt);
+                TFnombreActionPerformed(evt);
             }
         });
+        jPanel1.add(TFnombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(123, 142, 160, -1));
 
         jLabel3.setText("Clave");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 272, -1, -1));
 
         ETemailEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ETemailEmpleadoActionPerformed(evt);
             }
         });
+        jPanel1.add(ETemailEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 306, 160, -1));
 
         jLabel4.setText("Email");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 312, -1, -1));
 
         jLabel5.setText("Telefono");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 352, -1, -1));
 
         ETtelefonoEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ETtelefonoEmpleadoActionPerformed(evt);
             }
         });
+        jPanel1.add(ETtelefonoEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 346, 160, -1));
 
         jLabel6.setText("Cargo");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 391, -1, -1));
 
         jLabel7.setText("Direccion");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 430, -1, -1));
 
         ETdireccionEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 ETdireccionEmpleadoActionPerformed(evt);
             }
         });
+        jPanel1.add(ETdireccionEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 424, 160, -1));
 
         jLabel8.setText("Horario");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 470, -1, -1));
 
         EThorarioEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 EThorarioEmpleadoActionPerformed(evt);
             }
         });
+        jPanel1.add(EThorarioEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 464, 160, -1));
 
         jLabel9.setText("Foto");
+        jPanel1.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 520, -1, -1));
 
-        jButton1.setText("Crear");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/registrar.jpg"))); // NOI18N
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 650, 113, 36));
+        jPanel1.add(ETclaveEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 266, 160, -1));
 
-        botonImagenUsuario.setText("Buscar");
+        botonImagenUsuario.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/240_F_31912495_8klNKRbxUyWs2aDvp9yxfwmD4RGnBYr9.jpg"))); // NOI18N
         botonImagenUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonImagenUsuarioActionPerformed(evt);
             }
         });
+        jPanel1.add(botonImagenUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 504, 105, 32));
+        jPanel1.add(imagenLabel, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 548, 200, 200));
 
         comboCargos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
         comboCargos.addActionListener(new java.awt.event.ActionListener() {
@@ -146,139 +244,263 @@ public class Gerente extends javax.swing.JFrame {
                 comboCargosActionPerformed(evt);
             }
         });
+        jPanel1.add(comboCargos, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 386, 77, -1));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel4))
-                        .addGap(94, 94, 94)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(ETclaveEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ETemailEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jLabel5)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.LEADING))
-                        .addGap(76, 76, 76)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(ETtelefonoEmpleado)
-                            .addComponent(comboCargos, 0, 77, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9))
-                        .addGap(67, 67, 67)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(EThorarioEmpleado)
-                            .addComponent(ETusuarioEmpleado)
-                            .addComponent(ETdireccionEmpleado)
-                            .addComponent(botonImagenUsuario, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(192, Short.MAX_VALUE)
-                .addComponent(imagenLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(142, 142, 142))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(200, 200, 200)
-                .addComponent(jButton1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(80, 80, 80)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(ETusuarioEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(ETclaveEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(ETemailEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel5)
-                    .addComponent(ETtelefonoEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(comboCargos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel7)
-                    .addComponent(ETdireccionEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel8)
-                    .addComponent(EThorarioEmpleado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel9)
-                    .addComponent(botonImagenUsuario))
-                .addGap(27, 27, 27)
-                .addComponent(imagenLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 30, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(24, 24, 24))
-        );
+        ETusuarioEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ETusuarioEmpleadoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(ETusuarioEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 226, 160, -1));
+
+        jLabel10.setText("ID Usuario(Cedula)");
+        jPanel1.add(jLabel10, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 232, -1, -1));
+
+        jLabel11.setText("Tipo Doc");
+        jPanel1.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 193, -1, -1));
+
+        jLabel13.setText("Apellido");
+        jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(301, 148, -1, -1));
+
+        TFapellido.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TFapellidoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(TFapellido, new org.netbeans.lib.awtextra.AbsoluteConstraints(363, 142, 160, -1));
+
+        comboDocumentos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel1.add(comboDocumentos, new org.netbeans.lib.awtextra.AbsoluteConstraints(275, 188, 77, -1));
+
+        jLabel14.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/restaurant1.jpg"))); // NOI18N
+        jPanel1.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(235, 6, -1, -1));
+
+        jLabel26.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Verde-Luz-Sólido-Pintura.jpg"))); // NOI18N
+        jPanel1.add(jLabel26, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 570, 760));
 
         javax.swing.GroupLayout ventanaCrearEmpleadoLayout = new javax.swing.GroupLayout(ventanaCrearEmpleado.getContentPane());
         ventanaCrearEmpleado.getContentPane().setLayout(ventanaCrearEmpleadoLayout);
         ventanaCrearEmpleadoLayout.setHorizontalGroup(
             ventanaCrearEmpleadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(ventanaCrearEmpleadoLayout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         ventanaCrearEmpleadoLayout.setVerticalGroup(
             ventanaCrearEmpleadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
+        jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel12.setText("Nombre");
+        jPanel2.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(70, 166, -1, -1));
+
+        TFnombre1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TFnombre1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(TFnombre1, new org.netbeans.lib.awtextra.AbsoluteConstraints(144, 154, 141, -1));
+
+        ETemailEmpleado1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ETemailEmpleado1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(ETemailEmpleado1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 238, 77, -1));
+
+        jLabel15.setText("Email");
+        jPanel2.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 244, -1, -1));
+
+        jLabel16.setText("Telefono");
+        jPanel2.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 284, -1, -1));
+
+        ETtelefonoEmpleado1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ETtelefonoEmpleado1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(ETtelefonoEmpleado1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 278, 77, -1));
+
+        jLabel17.setText("Cargo");
+        jPanel2.add(jLabel17, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 323, -1, -1));
+
+        jLabel18.setText("Direccion");
+        jPanel2.add(jLabel18, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 362, -1, -1));
+
+        ETdireccionEmpleado1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ETdireccionEmpleado1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(ETdireccionEmpleado1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 356, 143, -1));
+
+        jLabel19.setText("Horario");
+        jPanel2.add(jLabel19, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 402, -1, -1));
+
+        EThorarioEmpleado1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EThorarioEmpleado1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(EThorarioEmpleado1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 396, 143, -1));
+
+        jLabel20.setText("Foto");
+        jPanel2.add(jLabel20, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 454, -1, -1));
+
+        jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/botonmodificar.jpg"))); // NOI18N
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(237, 688, 116, 39));
+
+        botonImagenUsuario1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/240_F_31912495_8klNKRbxUyWs2aDvp9yxfwmD4RGnBYr9.jpg"))); // NOI18N
+        botonImagenUsuario1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonImagenUsuario1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(botonImagenUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 436, 105, 34));
+        jPanel2.add(imagenLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(221, 476, 200, 200));
+
+        comboCargos1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboCargos1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboCargos1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(comboCargos1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 318, 77, -1));
+
+        jLabel22.setText("Tipo Doc");
+        jPanel2.add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(192, 205, -1, -1));
+
+        jLabel23.setText("Apellido");
+        jPanel2.add(jLabel23, new org.netbeans.lib.awtextra.AbsoluteConstraints(327, 160, -1, -1));
+
+        TFapellido1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                TFapellido1ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(TFapellido1, new org.netbeans.lib.awtextra.AbsoluteConstraints(377, 154, 141, -1));
+
+        comboDocumentos1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jPanel2.add(comboDocumentos1, new org.netbeans.lib.awtextra.AbsoluteConstraints(316, 200, 77, -1));
+
+        jLabel21.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/restaurant1.jpg"))); // NOI18N
+        jPanel2.add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 6, -1, -1));
+
+        jLabel27.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Verde-Luz-Sólido-Pintura.jpg"))); // NOI18N
+        jPanel2.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 610, 750));
+
+        javax.swing.GroupLayout ventanaModificarEmpleadoLayout = new javax.swing.GroupLayout(ventanaModificarEmpleado.getContentPane());
+        ventanaModificarEmpleado.getContentPane().setLayout(ventanaModificarEmpleadoLayout);
+        ventanaModificarEmpleadoLayout.setHorizontalGroup(
+            ventanaModificarEmpleadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 610, Short.MAX_VALUE)
+            .addGroup(ventanaModificarEmpleadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        ventanaModificarEmpleadoLayout.setVerticalGroup(
+            ventanaModificarEmpleadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 750, Short.MAX_VALUE)
+            .addGroup(ventanaModificarEmpleadoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(ventanaModificarEmpleadoLayout.createSequentialGroup()
+                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+        );
+
+        ventanaSeleccionarEmpleado.getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        tablaEmpleados.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tablaEmpleados);
+
+        ventanaSeleccionarEmpleado.getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(88, 154, 375, 163));
+
+        botonModificarEmpleado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ModificarEmpleado.jpg"))); // NOI18N
+        botonModificarEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonModificarEmpleadoActionPerformed(evt);
+            }
+        });
+        ventanaSeleccionarEmpleado.getContentPane().add(botonModificarEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 340, 126, 115));
+
+        botonEliminarEmpleado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/eliminarEmpleado.jpg"))); // NOI18N
+        botonEliminarEmpleado.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEliminarEmpleadoActionPerformed(evt);
+            }
+        });
+        ventanaSeleccionarEmpleado.getContentPane().add(botonEliminarEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(309, 340, 126, 115));
+
+        jLabel24.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/restaurant1.jpg"))); // NOI18N
+        ventanaSeleccionarEmpleado.getContentPane().add(jLabel24, new org.netbeans.lib.awtextra.AbsoluteConstraints(201, 6, -1, -1));
+
+        jLabel28.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Verde-Luz-Sólido-Pintura.jpg"))); // NOI18N
+        ventanaSeleccionarEmpleado.getContentPane().add(jLabel28, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 580, 540));
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 48)); // NOI18N
         jLabel1.setText("Gerente");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 6, -1, -1));
 
-        botonCrearEmpleado.setText("Crear Empleado");
+        botonCrearEmpleado.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/registrarEmpl - copia (2).jpg"))); // NOI18N
         botonCrearEmpleado.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonCrearEmpleadoActionPerformed(evt);
             }
         });
+        getContentPane().add(botonCrearEmpleado, new org.netbeans.lib.awtextra.AbsoluteConstraints(59, 80, 126, 118));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(139, 139, 139)
-                        .addComponent(botonCrearEmpleado))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(172, 172, 172)
-                        .addComponent(jLabel1)))
-                .addContainerGap(142, Short.MAX_VALUE))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(29, 29, 29)
-                .addComponent(jLabel1)
-                .addGap(34, 34, 34)
-                .addComponent(botonCrearEmpleado)
-                .addContainerGap(199, Short.MAX_VALUE))
-        );
+        botonModificarEmple.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/ModificarEmpleado.jpg"))); // NOI18N
+        botonModificarEmple.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonModificarEmpleActionPerformed(evt);
+            }
+        });
+        getContentPane().add(botonModificarEmple, new org.netbeans.lib.awtextra.AbsoluteConstraints(289, 80, 126, 118));
+
+        botonmodificarCarta.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/carta-logo - copia.jpg"))); // NOI18N
+        botonmodificarCarta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonmodificarCartaActionPerformed(evt);
+            }
+        });
+        getContentPane().add(botonmodificarCarta, new org.netbeans.lib.awtextra.AbsoluteConstraints(59, 257, 126, 124));
+
+        cerrarSesionbuton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/CerrarSesion - copia.jpg"))); // NOI18N
+        cerrarSesionbuton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cerrarSesionbutonActionPerformed(evt);
+            }
+        });
+        getContentPane().add(cerrarSesionbuton, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 420, 126, 124));
+
+        Reportes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Reportes_2014.jpg"))); // NOI18N
+        Reportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ReportesActionPerformed(evt);
+            }
+        });
+        getContentPane().add(Reportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 260, 120, 120));
+
+        jLabel25.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Verde-Luz-Sólido-Pintura.jpg"))); // NOI18N
+        getContentPane().add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 510, 560));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -292,9 +514,9 @@ public class Gerente extends javax.swing.JFrame {
                 ventanaCrearEmpleado.pack();
     }//GEN-LAST:event_botonCrearEmpleadoActionPerformed
 
-    private void ETusuarioEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ETusuarioEmpleadoActionPerformed
+    private void TFnombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TFnombreActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_ETusuarioEmpleadoActionPerformed
+    }//GEN-LAST:event_TFnombreActionPerformed
 
     private void ETemailEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ETemailEmpleadoActionPerformed
         // TODO add your handling code here:
@@ -362,6 +584,19 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
         // TODO add your handling code here:
         
         
+        if(TFapellido.getText().toString().equalsIgnoreCase("")||ETusuarioEmpleado.getText().toString().equalsIgnoreCase("")||TFnombre.getText().toString().equalsIgnoreCase("")||ETemailEmpleado.getText().toString().equalsIgnoreCase("")||ETtelefonoEmpleado.getText().toString().equalsIgnoreCase("")||ETdireccionEmpleado.getText().toString().equalsIgnoreCase("")||ETclaveEmpleado.getText().toString().equalsIgnoreCase("")||EThorarioEmpleado.getText().toString().equalsIgnoreCase("")){
+            
+            
+            JOptionPane.showMessageDialog(null, "Faltan campos por llenar");
+            return;
+        
+        }
+        
+        
+        
+        
+        
+        
         String cargo = "";
         int iCargo = comboCargos.getSelectedIndex();
         
@@ -378,7 +613,6 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
         }
         
         
-        JOptionPane.showMessageDialog(null, cargo);
 
         
         EncriptarC encriptador = new EncriptarC();
@@ -411,6 +645,9 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
 
                 return;
             }
+        empleado.setNombre(TFnombre.getText().toString());
+        empleado.setApellido(TFapellido.getText().toString());
+        empleado.setTipoDocumento(tiposDoc[comboDocumentos.getSelectedIndex()]);
         empleado.setTipoempleado(cargo);
         empleado.setIdempleado(Integer.parseInt(ETusuarioEmpleado.getText().toString()));
         empleado.setCargo(cargo);
@@ -429,6 +666,13 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
         
         dao.create(empleado);
             JOptionPane.showMessageDialog(null, "Empleado Creado");
+            ventanaCrearEmpleado.setVisible(false);
+            
+        }catch(NullPointerException m){
+            m.printStackTrace();
+             JOptionPane.showMessageDialog(null, "Faltan campos por llenar");
+            return;
+        
         } catch (NumberFormatException ex) {
             
             //Logger.getLogger(Tortteli.class.getName()).log(Level.SEVERE, null, ex);
@@ -452,6 +696,459 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
     
 
     }//GEN-LAST:event_comboCargosActionPerformed
+
+    private void ETusuarioEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ETusuarioEmpleadoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ETusuarioEmpleadoActionPerformed
+
+    private void TFapellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TFapellidoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TFapellidoActionPerformed
+
+    private void TFnombre1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TFnombre1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TFnombre1ActionPerformed
+
+    private void ETemailEmpleado1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ETemailEmpleado1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ETemailEmpleado1ActionPerformed
+
+    private void ETtelefonoEmpleado1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ETtelefonoEmpleado1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ETtelefonoEmpleado1ActionPerformed
+
+    private void ETdireccionEmpleado1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ETdireccionEmpleado1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ETdireccionEmpleado1ActionPerformed
+
+    private void EThorarioEmpleado1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EThorarioEmpleado1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EThorarioEmpleado1ActionPerformed
+
+    private void botonImagenUsuario1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonImagenUsuario1ActionPerformed
+
+        
+       
+     JFileChooser chooser = new JFileChooser();
+chooser.setCurrentDirectory(new java.io.File(".png"));
+chooser.setDialogTitle("choosertitle");
+chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+chooser.setAcceptAllFileFilterUsed(false);
+
+if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+  System.out.println("getCurrentDirectory(): " + chooser.getCurrentDirectory());
+  System.out.println("getSelectedFile() : " + chooser.getSelectedFile());
+} else {
+  System.out.println("No Selection ");
+}
+String base64 = "";
+        
+        try{
+         java.io.File file= new java.io.File(chooser.getSelectedFile()+""); 
+      java.io.FileInputStream fis= new java.io.FileInputStream(file); 
+      byte[] buff= new byte[(int)file.length()]; 
+      fis.read(buff); 
+  // codificar base64 
+       base64= new sun.misc.BASE64Encoder().encode(buff); 
+      System.out.println("codificado:\n"+base64); 
+      imagenGlobal = base64;
+ // decodificar base64 
+      byte[] bytes= new sun.misc.BASE64Decoder().decodeBuffer(base64); 
+      System.out.println("decodificado:\n"+new String(bytes)); 
+// TODO add your handling code here:
+      
+       
+        byte[] btDataFile = new sun.misc.BASE64Decoder().decodeBuffer(base64);
+BufferedImage image = ImageIO.read(new ByteArrayInputStream(btDataFile));
+EncriptarC objeto = new EncriptarC();
+objeto.getScaledImage(image,100,100);
+imagenLabel1.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
+
+
+        }catch(Exception e){
+            
+            
+        }
+        
+       
+// TODO add your handling code here:
+    }//GEN-LAST:event_botonImagenUsuario1ActionPerformed
+
+    private void comboCargos1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCargos1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_comboCargos1ActionPerformed
+
+    private void TFapellido1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TFapellido1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_TFapellido1ActionPerformed
+
+    private void botonModificarEmpleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarEmpleActionPerformed
+
+       
+      
+        ventanaSeleccionarEmpleado.setEnabled(true);
+                ventanaSeleccionarEmpleado.setVisible(true);
+                ventanaSeleccionarEmpleado.pack();
+        try {
+            llenarTablasEmpleados(tablaEmpleados);
+            
+            
+// TODO add your handling code here:
+        } catch (IOException ex) {
+            Logger.getLogger(Gerente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_botonModificarEmpleActionPerformed
+
+    private void botonModificarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonModificarEmpleadoActionPerformed
+
+        if(tablaEmpleados.getSelectedRow() == -1){
+            JOptionPane.showMessageDialog(null, "Seleccione un empleado");
+            return;
+            
+        }
+        
+        ventanaModificarEmpleado.setEnabled(true);
+                ventanaModificarEmpleado.setVisible(true);
+                ventanaModificarEmpleado.pack();
+                
+                
+                
+               
+        idEmpleadoSeleccionado = listaEmpleados.get(tablaEmpleados.getSelectedRow()).getIdempleado();
+        
+        
+        
+        
+       EntityManagerFactory emf = Persistence.createEntityManagerFactory("RestauranteTorteliPU");//PruebaJPAPU es el nombre de nuestra unidad de persistencia
+        
+       EmpleadoJpaController dao = new EmpleadoJpaController(emf);//Creamos un controlador de personal
+        
+        Empleado empleado = new Empleado();
+        
+        empleado = dao.findEmpleado(idEmpleadoSeleccionado);
+                
+                
+        TFnombre1.setText(empleado.getNombre());
+        TFapellido1.setText(empleado.getApellido());
+        ETdireccionEmpleado1.setText(empleado.getDireccion());
+        ETemailEmpleado1.setText(empleado.getCorreo());
+        EThorarioEmpleado1.setText(empleado.getHorario());
+        ETtelefonoEmpleado1.setText(empleado.getTelefono());
+          
+       
+        for (int i = 0; i < items.length; i++) {
+            if(empleado.getCargo().equals(items[i])){
+                comboCargos1.setSelectedIndex(i);
+              //  JOptionPane.showMessageDialog(null, i+""+ empleado.getCargo());
+            }
+        }
+        
+        for (int i = 0; i < tiposDoc.length; i++) {
+            if(empleado.getTipoDocumento().equals(tiposDoc[i])){
+                comboDocumentos1.setSelectedIndex(i);
+            }
+        }
+        
+        
+        imagenGlobal = empleado.getFoto().toString();
+       
+        byte[] btDataFile;
+        try {
+            btDataFile = new sun.misc.BASE64Decoder().decodeBuffer(empleado.getFoto().toString());
+        
+BufferedImage image = ImageIO.read(new ByteArrayInputStream(btDataFile));
+EncriptarC objeto = new EncriptarC();
+objeto.getScaledImage(image,100,100);
+imagenLabel1.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
+
+      
+              } catch (IOException ex) {
+            Logger.getLogger(Gerente.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+// TODO add your handling code here:
+    }//GEN-LAST:event_botonModificarEmpleadoActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+
+        if(TFapellido1.getText().toString().equalsIgnoreCase("")||TFnombre1.getText().toString().equalsIgnoreCase("")||ETemailEmpleado1.getText().toString().equalsIgnoreCase("")||ETtelefonoEmpleado1.getText().toString().equalsIgnoreCase("")||ETdireccionEmpleado1.getText().toString().equalsIgnoreCase("")||EThorarioEmpleado1.getText().toString().equalsIgnoreCase("")){
+
+            JOptionPane.showMessageDialog(null, "Faltan campos por llenar");
+            return;
+
+        }
+
+        String cargo = "";
+        int iCargo = comboCargos1.getSelectedIndex();
+
+        if(iCargo == 0){
+            cargo = "Gerente";
+        }
+
+        if(iCargo == 1){
+            cargo = "Mesero";
+        }
+
+        if(iCargo == 2){
+            cargo = "Cajero";
+        }
+
+
+        EncriptarC encriptador = new EncriptarC();
+
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("RestauranteTorteliPU");//PruebaJPAPU es el nombre de nuestra unidad de persistencia
+
+        EmpleadoJpaController dao = new EmpleadoJpaController(emf);//Creamos un controlador de personal
+
+        Empleado empleado = new Empleado();
+
+        
+        try {
+
+            if(imagenGlobal.equalsIgnoreCase("")){
+
+                JOptionPane.showMessageDialog(null, "Seleccione una imagen");
+
+                return;
+            }
+            
+            empleado = dao.findEmpleado(idEmpleadoSeleccionado);
+            empleado.setNombre(TFnombre1.getText().toString());
+            empleado.setApellido(TFapellido1.getText().toString());
+            empleado.setTipoDocumento(tiposDoc[comboDocumentos1.getSelectedIndex()]);
+            empleado.setTipoempleado(cargo);
+            empleado.setCargo(cargo);
+            empleado.setCorreo(ETemailEmpleado1.getText().toString());
+            empleado.setTelefono(ETtelefonoEmpleado1.getText().toString());
+            empleado.setDireccion(ETdireccionEmpleado1.getText().toString());
+            empleado.setHorario(EThorarioEmpleado1.getText().toString());
+            empleado.setFoto(imagenGlobal);
+
+            //JOptionPane.showMessageDialog(null, dao.findProducto(1).getNombreproducto());
+            //System.out.println(dao.findProducto(1).getNombreproducto());
+
+            dao.edit(empleado);
+            JOptionPane.showMessageDialog(null, "Empleado modificado con exito");
+            this.setVisible(false);
+            ventanaModificarEmpleado.setVisible(false);
+
+        }catch(NullPointerException m){
+            m.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Faltan campos por llenar");
+            return;
+
+        } catch (NumberFormatException ex) {
+
+            //Logger.getLogger(Tortteli.class.getName()).log(Level.SEVERE, null, ex);
+            //System.out.println(ex);
+            JOptionPane.showMessageDialog(null, "Se espera un numero en el ID");
+
+            ex.printStackTrace();
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, "Ya existe un empleado con este ID");
+
+        }
+        //Al ejecutar el método puede que salte una excepcion por lo que es importante lanzarla desde el main con throws Exception
+        emf.close();
+
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void botonEliminarEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEliminarEmpleadoActionPerformed
+
+        
+        if(tablaEmpleados.getSelectedRow() == -1){
+            JOptionPane.showMessageDialog(null, "Seleccione un empleado");
+            return;
+            
+        }
+         EntityManagerFactory emf = Persistence.createEntityManagerFactory("RestauranteTorteliPU");//PruebaJPAPU es el nombre de nuestra unidad de persistencia
+
+        EmpleadoJpaController dao = new EmpleadoJpaController(emf);//Creamos un controlador de personal
+
+        Empleado empleado = new Empleado();
+        
+        try {
+            idEmpleadoSeleccionado = listaEmpleados.get(tablaEmpleados.getSelectedRow()).getIdempleado();
+            dao.destroy(idEmpleadoSeleccionado);
+            JOptionPane.showMessageDialog(null, "Empleado eliminado con exito");
+             try {
+                 llenarTablasEmpleados(tablaEmpleados);
+             } catch (IOException ex) {
+                 Logger.getLogger(Gerente.class.getName()).log(Level.SEVERE, null, ex);
+             }
+        } catch (IllegalOrphanException ex) {
+            Logger.getLogger(Gerente.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NonexistentEntityException ex) {
+            Logger.getLogger(Gerente.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                
+                
+
+
+    }//GEN-LAST:event_botonEliminarEmpleadoActionPerformed
+
+    private void botonmodificarCartaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonmodificarCartaActionPerformed
+
+         Carta carta = new Carta();
+                carta.setEnabled(true);
+                carta.setVisible(true);
+                carta.pack();
+
+// TODO add your handling code here:
+    }//GEN-LAST:event_botonmodificarCartaActionPerformed
+
+    private void cerrarSesionbutonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cerrarSesionbutonActionPerformed
+                Log login = new Log();
+                login.setEnabled(true);
+                login.setVisible(true);
+                login.pack();
+                this.setVisible(false);
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cerrarSesionbutonActionPerformed
+
+    private void ReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReportesActionPerformed
+        Reportes reporte = new Reportes();
+        reporte.setEnabled(true);
+        reporte.setVisible(true);
+        reporte.Reporte1.setEnabled(true);
+        reporte.Reporte2.setEnabled(true);
+        reporte.Reporte3.setEnabled(true);
+        reporte.Reporte4.setEnabled(true);
+        reporte.Reporte5.setEnabled(true);
+        reporte.Reporte6.setEnabled(true);
+    }//GEN-LAST:event_ReportesActionPerformed
+
+    
+    
+    
+public void llenarTablasEmpleados(JTable tabla) throws IOException{
+    
+     
+             listaEmpleados.clear();
+    
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("RestauranteTorteliPU");//PruebaJPAPU es el nombre de nuestra unidad de persistencia
+           
+            EmpleadoJpaController empleJPA = new EmpleadoJpaController(emf);
+            
+            
+           List<Empleado> listaEmpleadosBuscados = empleJPA.findEmpleadoEntities();
+
+            
+           for (int i = 0; i < listaEmpleadosBuscados.size(); i++) {
+               
+              
+               listaEmpleados.add(listaEmpleadosBuscados.get(i));
+               
+               
+        }
+           
+    
+    
+    
+    
+    
+           Object listaItems[][]  = new Object[listaEmpleados.size()][4];
+          
+          
+      
+          
+          
+           int precioAcum = 0;
+          
+        for (int i = 0; i < listaEmpleados.size(); i++) {
+            
+             
+            listaItems[i][0] = listaEmpleados.get(i).getNombre();
+            listaItems[i][1] = listaEmpleados.get(i).getApellido();
+            listaItems[i][2] = listaEmpleados.get(i).getIdempleado();
+            listaItems[i][3] = listaEmpleados.get(i).getCargo();
+
+           
+            
+        }
+        
+       
+        String columna[] = new String[] {"Nombre", "Apellido", "ID","Cargo"};
+        emf.close();
+        
+        tabla.setDefaultRenderer(Object.class,new RenderTabla());
+        
+        
+        
+        DefaultTableModel modelo = new DefaultTableModel(listaItems, columna);
+        
+       
+        tabla.setModel(modelo);
+
+
+    
+}
+
+
+
+public void editarOtroEmpleado(int idEmpleadoOtro){
+    
+        ventanaModificarEmpleado.setEnabled(true);
+                ventanaModificarEmpleado.setVisible(true);
+                ventanaModificarEmpleado.pack();
+                this.setVisible(false);
+                
+                
+                
+               
+        idEmpleadoSeleccionado = idEmpleadoOtro;
+        
+        
+        
+        
+       EntityManagerFactory emf = Persistence.createEntityManagerFactory("RestauranteTorteliPU");//PruebaJPAPU es el nombre de nuestra unidad de persistencia
+        
+       EmpleadoJpaController dao = new EmpleadoJpaController(emf);//Creamos un controlador de personal
+        
+        Empleado empleado = new Empleado();
+        
+        empleado = dao.findEmpleado(idEmpleadoSeleccionado);
+                
+                
+        TFnombre1.setText(empleado.getNombre());
+        TFapellido1.setText(empleado.getApellido());
+        ETdireccionEmpleado1.setText(empleado.getDireccion());
+        ETemailEmpleado1.setText(empleado.getCorreo());
+        EThorarioEmpleado1.setText(empleado.getHorario());
+        ETtelefonoEmpleado1.setText(empleado.getTelefono());
+          
+       
+        for (int i = 0; i < items.length; i++) {
+            if(empleado.getCargo().equals(items[i])){
+                comboCargos1.setSelectedIndex(i);
+              //  JOptionPane.showMessageDialog(null, i+""+ empleado.getCargo());
+            }
+        }
+        
+        for (int i = 0; i < tiposDoc.length; i++) {
+            if(empleado.getTipoDocumento().equals(tiposDoc[i])){
+                comboDocumentos1.setSelectedIndex(i);
+            }
+        }
+        
+        comboCargos1.setEnabled(false);
+        
+        imagenGlobal = empleado.getFoto().toString();
+       
+        byte[] btDataFile;
+        try {
+            btDataFile = new sun.misc.BASE64Decoder().decodeBuffer(empleado.getFoto().toString());
+        
+BufferedImage image = ImageIO.read(new ByteArrayInputStream(btDataFile));
+EncriptarC objeto = new EncriptarC();
+objeto.getScaledImage(image,100,100);
+imagenLabel1.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
+
+      
+              } catch (IOException ex) {
+            Logger.getLogger(Gerente.class.getName()).log(Level.SEVERE, null, ex);
+        }  
+}
 
     /**
      * @param args the command line arguments
@@ -483,7 +1180,7 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Gerente().setVisible(true);
+                new Gerente(12,0).setVisible(true);
             }
         });
     }
@@ -491,17 +1188,56 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField ETclaveEmpleado;
     private javax.swing.JTextField ETdireccionEmpleado;
+    private javax.swing.JTextField ETdireccionEmpleado1;
     private javax.swing.JTextField ETemailEmpleado;
+    private javax.swing.JTextField ETemailEmpleado1;
     private javax.swing.JTextField EThorarioEmpleado;
+    private javax.swing.JTextField EThorarioEmpleado1;
     private javax.swing.JTextField ETtelefonoEmpleado;
+    private javax.swing.JTextField ETtelefonoEmpleado1;
     private javax.swing.JTextField ETusuarioEmpleado;
+    private javax.swing.JButton Reportes;
+    private javax.swing.JTextField TFapellido;
+    private javax.swing.JTextField TFapellido1;
+    private javax.swing.JTextField TFnombre;
+    private javax.swing.JTextField TFnombre1;
     private javax.swing.JButton botonCrearEmpleado;
+    private javax.swing.JButton botonEliminarEmpleado;
     private javax.swing.JButton botonImagenUsuario;
+    private javax.swing.JButton botonImagenUsuario1;
+    private javax.swing.JButton botonModificarEmple;
+    private javax.swing.JButton botonModificarEmpleado;
+    private javax.swing.JButton botonmodificarCarta;
+    private javax.swing.JButton cerrarSesionbuton;
     private javax.swing.JComboBox comboCargos;
+    private javax.swing.JComboBox comboCargos1;
+    private javax.swing.JComboBox comboDocumentos;
+    private javax.swing.JComboBox comboDocumentos1;
     private javax.swing.JLabel imagenLabel;
+    private javax.swing.JLabel imagenLabel1;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
+    private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
+    private javax.swing.JLabel jLabel14;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
+    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel23;
+    private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -510,6 +1246,11 @@ imagenLabel.setIcon(new ImageIcon(objeto.getScaledImage(image,200,200)));
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tablaEmpleados;
     private javax.swing.JFrame ventanaCrearEmpleado;
+    private javax.swing.JFrame ventanaModificarEmpleado;
+    private javax.swing.JFrame ventanaSeleccionarEmpleado;
     // End of variables declaration//GEN-END:variables
 }

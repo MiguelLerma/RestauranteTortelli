@@ -14,8 +14,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -28,22 +26,21 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "factura")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f")
-    , @NamedQuery(name = "Factura.findByHorapago", query = "SELECT f FROM Factura f WHERE f.horapago = :horapago")
-    , @NamedQuery(name = "Factura.findByFacturaid", query = "SELECT f FROM Factura f WHERE f.facturaid = :facturaid")
-    , @NamedQuery(name = "Factura.findByTipopago", query = "SELECT f FROM Factura f WHERE f.tipopago = :tipopago")
-    , @NamedQuery(name = "Factura.findByFechafactura", query = "SELECT f FROM Factura f WHERE f.fechafactura = :fechafactura")
-    , @NamedQuery(name = "Factura.findByTotalfactura", query = "SELECT f FROM Factura f WHERE f.totalfactura = :totalfactura")
-    , @NamedQuery(name = "Factura.findByCedulacliente", query = "SELECT f FROM Factura f WHERE f.cedulacliente = :cedulacliente")
-    , @NamedQuery(name = "Factura.findByIva", query = "SELECT f FROM Factura f WHERE f.iva = :iva")})
+    @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f"),
+    @NamedQuery(name = "Factura.findByHorapago", query = "SELECT f FROM Factura f WHERE f.horapago = :horapago"),
+    @NamedQuery(name = "Factura.findByFacturaid", query = "SELECT f FROM Factura f WHERE f.facturaid = :facturaid"),
+    @NamedQuery(name = "Factura.findByEstadofactura", query = "SELECT f FROM Factura f WHERE f.estadofactura = :estadofactura"),
+    @NamedQuery(name = "Factura.findByFechafactura", query = "SELECT f FROM Factura f WHERE f.fechafactura = :fechafactura"),
+    @NamedQuery(name = "Factura.findByTotalfactura", query = "SELECT f FROM Factura f WHERE f.totalfactura = :totalfactura"),
+    @NamedQuery(name = "Factura.findByCedulacliente", query = "SELECT f FROM Factura f WHERE f.cedulacliente = :cedulacliente"),
+    @NamedQuery(name = "Factura.findByIva", query = "SELECT f FROM Factura f WHERE f.iva = :iva")})
 public class Factura implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
     @Column(name = "horapago")
@@ -54,8 +51,8 @@ public class Factura implements Serializable {
     @Column(name = "facturaid")
     private Integer facturaid;
     @Basic(optional = false)
-    @Column(name = "tipopago")
-    private String tipopago;
+    @Column(name = "estadofactura")
+    private String estadofactura;
     @Basic(optional = false)
     @Column(name = "fechafactura")
     @Temporal(TemporalType.DATE)
@@ -69,16 +66,13 @@ public class Factura implements Serializable {
     @Basic(optional = false)
     @Column(name = "iva")
     private int iva;
-    @JoinTable(name = "pago_factura", joinColumns = {
-        @JoinColumn(name = "factura_facturaid", referencedColumnName = "facturaid")}, inverseJoinColumns = {
-        @JoinColumn(name = "pago_valor_pago", referencedColumnName = "valor_pago")})
-    @ManyToMany
-    private Collection<Pago> pagoCollection;
     @JoinColumn(name = "pedido_idpedido", referencedColumnName = "idpedido")
     @ManyToOne(optional = false)
     private Pedido pedidoIdpedido;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "factura")
     private Collection<ProductosFactura> productosFacturaCollection;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "facturaFacturaid")
+    private Collection<PagoFactura> pagoFacturaCollection;
 
     public Factura() {
     }
@@ -87,10 +81,10 @@ public class Factura implements Serializable {
         this.facturaid = facturaid;
     }
 
-    public Factura(Integer facturaid, Date horapago, String tipopago, Date fechafactura, int totalfactura, int cedulacliente, int iva) {
+    public Factura(Integer facturaid, Date horapago, String estadofactura, Date fechafactura, int totalfactura, int cedulacliente, int iva) {
         this.facturaid = facturaid;
         this.horapago = horapago;
-        this.tipopago = tipopago;
+        this.estadofactura = estadofactura;
         this.fechafactura = fechafactura;
         this.totalfactura = totalfactura;
         this.cedulacliente = cedulacliente;
@@ -113,12 +107,12 @@ public class Factura implements Serializable {
         this.facturaid = facturaid;
     }
 
-    public String getTipopago() {
-        return tipopago;
+    public String getEstadofactura() {
+        return estadofactura;
     }
 
-    public void setTipopago(String tipopago) {
-        this.tipopago = tipopago;
+    public void setEstadofactura(String estadofactura) {
+        this.estadofactura = estadofactura;
     }
 
     public Date getFechafactura() {
@@ -153,15 +147,6 @@ public class Factura implements Serializable {
         this.iva = iva;
     }
 
-    @XmlTransient
-    public Collection<Pago> getPagoCollection() {
-        return pagoCollection;
-    }
-
-    public void setPagoCollection(Collection<Pago> pagoCollection) {
-        this.pagoCollection = pagoCollection;
-    }
-
     public Pedido getPedidoIdpedido() {
         return pedidoIdpedido;
     }
@@ -177,6 +162,15 @@ public class Factura implements Serializable {
 
     public void setProductosFacturaCollection(Collection<ProductosFactura> productosFacturaCollection) {
         this.productosFacturaCollection = productosFacturaCollection;
+    }
+
+    @XmlTransient
+    public Collection<PagoFactura> getPagoFacturaCollection() {
+        return pagoFacturaCollection;
+    }
+
+    public void setPagoFacturaCollection(Collection<PagoFactura> pagoFacturaCollection) {
+        this.pagoFacturaCollection = pagoFacturaCollection;
     }
 
     @Override

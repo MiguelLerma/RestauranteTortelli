@@ -21,17 +21,16 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "mesa")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Mesa.findAll", query = "SELECT m FROM Mesa m")
-    , @NamedQuery(name = "Mesa.findByNumeromesa", query = "SELECT m FROM Mesa m WHERE m.numeromesa = :numeromesa")
-    , @NamedQuery(name = "Mesa.findByPuestos", query = "SELECT m FROM Mesa m WHERE m.puestos = :puestos")})
+    @NamedQuery(name = "Mesa.findAll", query = "SELECT m FROM Mesa m"),
+    @NamedQuery(name = "Mesa.findByNumeromesa", query = "SELECT m FROM Mesa m WHERE m.numeromesa = :numeromesa"),
+    @NamedQuery(name = "Mesa.findByPuestos", query = "SELECT m FROM Mesa m WHERE m.puestos = :puestos")})
 public class Mesa implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @Basic(optional = false)

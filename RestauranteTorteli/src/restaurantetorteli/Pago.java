@@ -8,62 +8,62 @@ package restaurantetorteli;
 import java.io.Serializable;
 import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "pago")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pago.findAll", query = "SELECT p FROM Pago p")
-    , @NamedQuery(name = "Pago.findByIdPago", query = "SELECT p FROM Pago p WHERE p.idPago = :idPago")
-    , @NamedQuery(name = "Pago.findByNombrePago", query = "SELECT p FROM Pago p WHERE p.nombrePago = :nombrePago")
-    , @NamedQuery(name = "Pago.findByValorPago", query = "SELECT p FROM Pago p WHERE p.valorPago = :valorPago")})
+    @NamedQuery(name = "Pago.findAll", query = "SELECT p FROM Pago p"),
+    @NamedQuery(name = "Pago.findByIdPago", query = "SELECT p FROM Pago p WHERE p.idPago = :idPago"),
+    @NamedQuery(name = "Pago.findByNombrePago", query = "SELECT p FROM Pago p WHERE p.nombrePago = :nombrePago"),
+    @NamedQuery(name = "Pago.findByValorPago", query = "SELECT p FROM Pago p WHERE p.valorPago = :valorPago")})
 public class Pago implements Serializable {
-
     private static final long serialVersionUID = 1L;
+    @Id
     @Basic(optional = false)
     @Column(name = "id_pago")
-    private int idPago;
+    private Integer idPago;
     @Basic(optional = false)
     @Column(name = "nombre_pago")
     private String nombrePago;
-    @Id
     @Basic(optional = false)
     @Column(name = "valor_pago")
-    private Integer valorPago;
-    @ManyToMany(mappedBy = "pagoCollection")
-    private Collection<Factura> facturaCollection;
+    private int valorPago;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pagoIdPago")
+    private Collection<PagoFactura> pagoFacturaCollection;
 
     public Pago() {
     }
 
-    public Pago(Integer valorPago) {
-        this.valorPago = valorPago;
+    public Pago(Integer idPago) {
+        this.idPago = idPago;
     }
 
-    public Pago(Integer valorPago, int idPago, String nombrePago) {
-        this.valorPago = valorPago;
+    public Pago(Integer idPago, String nombrePago, int valorPago) {
         this.idPago = idPago;
         this.nombrePago = nombrePago;
+        this.valorPago = valorPago;
     }
 
-    public int getIdPago() {
+    public Integer getIdPago() {
         return idPago;
     }
 
-    public void setIdPago(int idPago) {
+    public void setIdPago(Integer idPago) {
         this.idPago = idPago;
     }
 
@@ -75,27 +75,27 @@ public class Pago implements Serializable {
         this.nombrePago = nombrePago;
     }
 
-    public Integer getValorPago() {
+    public int getValorPago() {
         return valorPago;
     }
 
-    public void setValorPago(Integer valorPago) {
+    public void setValorPago(int valorPago) {
         this.valorPago = valorPago;
     }
 
     @XmlTransient
-    public Collection<Factura> getFacturaCollection() {
-        return facturaCollection;
+    public Collection<PagoFactura> getPagoFacturaCollection() {
+        return pagoFacturaCollection;
     }
 
-    public void setFacturaCollection(Collection<Factura> facturaCollection) {
-        this.facturaCollection = facturaCollection;
+    public void setPagoFacturaCollection(Collection<PagoFactura> pagoFacturaCollection) {
+        this.pagoFacturaCollection = pagoFacturaCollection;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (valorPago != null ? valorPago.hashCode() : 0);
+        hash += (idPago != null ? idPago.hashCode() : 0);
         return hash;
     }
 
@@ -106,7 +106,7 @@ public class Pago implements Serializable {
             return false;
         }
         Pago other = (Pago) object;
-        if ((this.valorPago == null && other.valorPago != null) || (this.valorPago != null && !this.valorPago.equals(other.valorPago))) {
+        if ((this.idPago == null && other.idPago != null) || (this.idPago != null && !this.idPago.equals(other.idPago))) {
             return false;
         }
         return true;
@@ -114,7 +114,7 @@ public class Pago implements Serializable {
 
     @Override
     public String toString() {
-        return "restaurantetorteli.Pago[ valorPago=" + valorPago + " ]";
+        return "restaurantetorteli.Pago[ idPago=" + idPago + " ]";
     }
     
 }

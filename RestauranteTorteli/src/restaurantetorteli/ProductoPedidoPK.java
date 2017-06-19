@@ -12,11 +12,10 @@ import javax.persistence.Embeddable;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Embeddable
 public class ProductoPedidoPK implements Serializable {
-
     @Basic(optional = false)
     @Column(name = "producto_productoid")
     private int productoProductoid;
