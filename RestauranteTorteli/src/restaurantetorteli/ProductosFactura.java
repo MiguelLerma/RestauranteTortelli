@@ -19,19 +19,19 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "productos_factura")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ProductosFactura.findAll", query = "SELECT p FROM ProductosFactura p")
-    , @NamedQuery(name = "ProductosFactura.findByNombreProducto", query = "SELECT p FROM ProductosFactura p WHERE p.nombreProducto = :nombreProducto")
-    , @NamedQuery(name = "ProductosFactura.findByIdProducto", query = "SELECT p FROM ProductosFactura p WHERE p.productosFacturaPK.idProducto = :idProducto")
-    , @NamedQuery(name = "ProductosFactura.findByPrecioProducto", query = "SELECT p FROM ProductosFactura p WHERE p.precioProducto = :precioProducto")
-    , @NamedQuery(name = "ProductosFactura.findByFacturaFacturaid", query = "SELECT p FROM ProductosFactura p WHERE p.productosFacturaPK.facturaFacturaid = :facturaFacturaid")})
+    @NamedQuery(name = "ProductosFactura.findAll", query = "SELECT p FROM ProductosFactura p"),
+    @NamedQuery(name = "ProductosFactura.findByNombreProducto", query = "SELECT p FROM ProductosFactura p WHERE p.nombreProducto = :nombreProducto"),
+    @NamedQuery(name = "ProductosFactura.findByIdProducto", query = "SELECT p FROM ProductosFactura p WHERE p.productosFacturaPK.idProducto = :idProducto"),
+    @NamedQuery(name = "ProductosFactura.findByPrecioProducto", query = "SELECT p FROM ProductosFactura p WHERE p.precioProducto = :precioProducto"),
+    @NamedQuery(name = "ProductosFactura.findByFacturaFacturaid", query = "SELECT p FROM ProductosFactura p WHERE p.productosFacturaPK.facturaFacturaid = :facturaFacturaid"),
+    @NamedQuery(name = "ProductosFactura.findByCantidad", query = "SELECT p FROM ProductosFactura p WHERE p.cantidad = :cantidad")})
 public class ProductosFactura implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ProductosFacturaPK productosFacturaPK;
@@ -41,6 +41,8 @@ public class ProductosFactura implements Serializable {
     @Basic(optional = false)
     @Column(name = "precio_producto")
     private int precioProducto;
+    @Column(name = "cantidad")
+    private Integer cantidad;
     @JoinColumn(name = "factura_facturaid", referencedColumnName = "facturaid", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Factura factura;
@@ -84,6 +86,14 @@ public class ProductosFactura implements Serializable {
 
     public void setPrecioProducto(int precioProducto) {
         this.precioProducto = precioProducto;
+    }
+
+    public Integer getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(Integer cantidad) {
+        this.cantidad = cantidad;
     }
 
     public Factura getFactura() {

@@ -8,8 +8,8 @@ package Log;
 import Interfaz.Cajero;
 import Interfaz.Gerente;
 import Interfaz.Mesero;
-import JPAController.EmpleadoJpaController;
-import JPAController.PedidoJpaController;
+import JPAControl.EmpleadoJpaController;
+import JPAControl.PedidoJpaController;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.JOptionPane;
@@ -38,89 +38,63 @@ public class Log extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
+        jLabel3 = new javax.swing.JLabel();
         TFusuario = new javax.swing.JTextField();
         TFclave = new javax.swing.JPasswordField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         botonIngresar = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        jLabel4 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 204));
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 642, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 360, Short.MAX_VALUE)
+        );
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Logo-Tortelli-01-01 - copia.png"))); // NOI18N
+        getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(112, 29, -1, 130));
 
         TFusuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TFusuarioActionPerformed(evt);
             }
         });
+        getContentPane().add(TFusuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(241, 195, 150, -1));
 
         TFclave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 TFclaveActionPerformed(evt);
             }
         });
+        getContentPane().add(TFclave, new org.netbeans.lib.awtextra.AbsoluteConstraints(241, 241, 150, -1));
 
         jLabel1.setText("Usuario");
+        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 201, -1, -1));
 
         jLabel2.setText("Contraseña");
+        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(158, 247, -1, -1));
 
-        botonIngresar.setText("Ingresar");
+        botonIngresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/boton-ingresar.png"))); // NOI18N
         botonIngresar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 botonIngresarActionPerformed(evt);
             }
         });
+        getContentPane().add(botonIngresar, new org.netbeans.lib.awtextra.AbsoluteConstraints(185, 287, 110, 30));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(112, 112, 112)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2)
-                                .addComponent(jLabel1))
-                            .addGap(27, 27, 27)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(TFclave, javax.swing.GroupLayout.DEFAULT_SIZE, 86, Short.MAX_VALUE)
-                                .addComponent(TFusuario, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(botonIngresar)
-                            .addGap(57, 57, 57)))
-                    .addContainerGap(113, Short.MAX_VALUE)))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(jPanel1Layout.createSequentialGroup()
-                    .addGap(102, 102, 102)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(TFusuario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1))
-                    .addGap(18, 18, 18)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(TFclave, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2))
-                    .addGap(18, 18, 18)
-                    .addComponent(botonIngresar)
-                    .addContainerGap(102, Short.MAX_VALUE)))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        jLabel4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Verde-Luz-Sólido-Pintura.jpg"))); // NOI18N
+        getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 530, 400));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -148,10 +122,11 @@ public class Log extends javax.swing.JFrame {
         try{
         if(empleadoJPA.findEmpleado(Integer.parseInt(usuario)).getPin().equals(clave)){
 
-            if(empleadoJPA.findEmpleado(Integer.parseInt(usuario)).getCargo().equalsIgnoreCase("Gerente")){
+            Empleado empleado = empleadoJPA.findEmpleado(Integer.parseInt(usuario));
+            if(empleado.getCargo().equalsIgnoreCase("Gerente")){
                 
 
-                Gerente gerenteUI = new Gerente();
+                Gerente gerenteUI = new Gerente(empleado.getIdempleado(),0);
                 gerenteUI.setEnabled(true);
                 gerenteUI.setVisible(true);
                 gerenteUI.pack();
@@ -159,10 +134,10 @@ public class Log extends javax.swing.JFrame {
 
         }
             
-             if(empleadoJPA.findEmpleado(Integer.parseInt(usuario)).getCargo().equalsIgnoreCase("Mesero")){
+             if(empleado.getCargo().equalsIgnoreCase("Mesero")){
                 
 
-                Mesero meseroUI = new Mesero();
+                Mesero meseroUI = new Mesero(empleado.getIdempleado());
                 meseroUI.setEnabled(true);
                 meseroUI.setVisible(true);
                 meseroUI.pack();
@@ -170,10 +145,10 @@ public class Log extends javax.swing.JFrame {
 
         }
              
-              if(empleadoJPA.findEmpleado(Integer.parseInt(usuario)).getCargo().equalsIgnoreCase("Cajero")){
+              if(empleado.getCargo().equalsIgnoreCase("Cajero")){
                 
 
-                Cajero cajeroUI = new Cajero();
+                Cajero cajeroUI = new Cajero(empleado.getIdempleado());
                 cajeroUI.setEnabled(true);
                 cajeroUI.setVisible(true);
                 cajeroUI.pack();
@@ -192,6 +167,7 @@ public class Log extends javax.swing.JFrame {
 
         }catch(Exception e){
             
+            e.printStackTrace();
         JOptionPane.showMessageDialog(null, "El empleado no existe");  
 
         }
@@ -239,6 +215,8 @@ public class Log extends javax.swing.JFrame {
     private javax.swing.JButton botonIngresar;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }

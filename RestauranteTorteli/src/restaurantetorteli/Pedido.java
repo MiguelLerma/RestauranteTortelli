@@ -26,20 +26,18 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "pedido")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Pedido.findAll", query = "SELECT p FROM Pedido p")
-    , @NamedQuery(name = "Pedido.findByTipopedido", query = "SELECT p FROM Pedido p WHERE p.tipopedido = :tipopedido")
-    , @NamedQuery(name = "Pedido.findByIdpedido", query = "SELECT p FROM Pedido p WHERE p.idpedido = :idpedido")
-    , @NamedQuery(name = "Pedido.findByHorapedido", query = "SELECT p FROM Pedido p WHERE p.horapedido = :horapedido")
-    , @NamedQuery(name = "Pedido.findByHoraentrega", query = "SELECT p FROM Pedido p WHERE p.horaentrega = :horaentrega")
-    , @NamedQuery(name = "Pedido.findByProductoid", query = "SELECT p FROM Pedido p WHERE p.productoid = :productoid")})
+    @NamedQuery(name = "Pedido.findAll", query = "SELECT p FROM Pedido p"),
+    @NamedQuery(name = "Pedido.findByTipopedido", query = "SELECT p FROM Pedido p WHERE p.tipopedido = :tipopedido"),
+    @NamedQuery(name = "Pedido.findByIdpedido", query = "SELECT p FROM Pedido p WHERE p.idpedido = :idpedido"),
+    @NamedQuery(name = "Pedido.findByHorapedido", query = "SELECT p FROM Pedido p WHERE p.horapedido = :horapedido"),
+    @NamedQuery(name = "Pedido.findByHoraentrega", query = "SELECT p FROM Pedido p WHERE p.horaentrega = :horaentrega")})
 public class Pedido implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
     @Column(name = "tipopedido")
@@ -48,27 +46,22 @@ public class Pedido implements Serializable {
     @Basic(optional = false)
     @Column(name = "idpedido")
     private Integer idpedido;
-    @Basic(optional = false)
     @Column(name = "horapedido")
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date horapedido;
-    @Basic(optional = false)
     @Column(name = "horaentrega")
-    @Temporal(TemporalType.TIME)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date horaentrega;
-    @Basic(optional = false)
-    @Column(name = "productoid")
-    private int productoid;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido")
-    private Collection<ProductoPedido> productoPedidoCollection;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "pedidoIdpedido")
     private Collection<Factura> facturaCollection;
-    @JoinColumn(name = "empleado_idempleado", referencedColumnName = "idempleado")
-    @ManyToOne(optional = false)
-    private Empleado empleadoIdempleado;
     @JoinColumn(name = "mesa_numeromesa", referencedColumnName = "numeromesa")
     @ManyToOne(optional = false)
     private Mesa mesaNumeromesa;
+    @JoinColumn(name = "empleado_idempleado", referencedColumnName = "idempleado")
+    @ManyToOne(optional = false)
+    private Empleado empleadoIdempleado;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido")
+    private Collection<ProductoPedido> productoPedidoCollection;
 
     public Pedido() {
     }
@@ -77,12 +70,9 @@ public class Pedido implements Serializable {
         this.idpedido = idpedido;
     }
 
-    public Pedido(Integer idpedido, String tipopedido, Date horapedido, Date horaentrega, int productoid) {
+    public Pedido(Integer idpedido, String tipopedido) {
         this.idpedido = idpedido;
         this.tipopedido = tipopedido;
-        this.horapedido = horapedido;
-        this.horaentrega = horaentrega;
-        this.productoid = productoid;
     }
 
     public String getTipopedido() {
@@ -117,23 +107,6 @@ public class Pedido implements Serializable {
         this.horaentrega = horaentrega;
     }
 
-    public int getProductoid() {
-        return productoid;
-    }
-
-    public void setProductoid(int productoid) {
-        this.productoid = productoid;
-    }
-
-    @XmlTransient
-    public Collection<ProductoPedido> getProductoPedidoCollection() {
-        return productoPedidoCollection;
-    }
-
-    public void setProductoPedidoCollection(Collection<ProductoPedido> productoPedidoCollection) {
-        this.productoPedidoCollection = productoPedidoCollection;
-    }
-
     @XmlTransient
     public Collection<Factura> getFacturaCollection() {
         return facturaCollection;
@@ -141,6 +114,14 @@ public class Pedido implements Serializable {
 
     public void setFacturaCollection(Collection<Factura> facturaCollection) {
         this.facturaCollection = facturaCollection;
+    }
+
+    public Mesa getMesaNumeromesa() {
+        return mesaNumeromesa;
+    }
+
+    public void setMesaNumeromesa(Mesa mesaNumeromesa) {
+        this.mesaNumeromesa = mesaNumeromesa;
     }
 
     public Empleado getEmpleadoIdempleado() {
@@ -151,12 +132,13 @@ public class Pedido implements Serializable {
         this.empleadoIdempleado = empleadoIdempleado;
     }
 
-    public Mesa getMesaNumeromesa() {
-        return mesaNumeromesa;
+    @XmlTransient
+    public Collection<ProductoPedido> getProductoPedidoCollection() {
+        return productoPedidoCollection;
     }
 
-    public void setMesaNumeromesa(Mesa mesaNumeromesa) {
-        this.mesaNumeromesa = mesaNumeromesa;
+    public void setProductoPedidoCollection(Collection<ProductoPedido> productoPedidoCollection) {
+        this.productoPedidoCollection = productoPedidoCollection;
     }
 
     @Override

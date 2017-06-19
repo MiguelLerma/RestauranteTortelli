@@ -21,21 +21,20 @@ import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "producto")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "Producto.findAll", query = "SELECT p FROM Producto p")
-    , @NamedQuery(name = "Producto.findByNombreproducto", query = "SELECT p FROM Producto p WHERE p.nombreproducto = :nombreproducto")
-    , @NamedQuery(name = "Producto.findByFoto", query = "SELECT p FROM Producto p WHERE p.foto = :foto")
-    , @NamedQuery(name = "Producto.findByPrecio", query = "SELECT p FROM Producto p WHERE p.precio = :precio")
-    , @NamedQuery(name = "Producto.findByDescripcion", query = "SELECT p FROM Producto p WHERE p.descripcion = :descripcion")
-    , @NamedQuery(name = "Producto.findByCategoria", query = "SELECT p FROM Producto p WHERE p.categoria = :categoria")
-    , @NamedQuery(name = "Producto.findByProductoid", query = "SELECT p FROM Producto p WHERE p.productoid = :productoid")})
+    @NamedQuery(name = "Producto.findAll", query = "SELECT p FROM Producto p"),
+    @NamedQuery(name = "Producto.findByNombreproducto", query = "SELECT p FROM Producto p WHERE p.nombreproducto = :nombreproducto"),
+    @NamedQuery(name = "Producto.findByFoto", query = "SELECT p FROM Producto p WHERE p.foto = :foto"),
+    @NamedQuery(name = "Producto.findByPrecio", query = "SELECT p FROM Producto p WHERE p.precio = :precio"),
+    @NamedQuery(name = "Producto.findByDescripcion", query = "SELECT p FROM Producto p WHERE p.descripcion = :descripcion"),
+    @NamedQuery(name = "Producto.findByCategoria", query = "SELECT p FROM Producto p WHERE p.categoria = :categoria"),
+    @NamedQuery(name = "Producto.findByProductoid", query = "SELECT p FROM Producto p WHERE p.productoid = :productoid")})
 public class Producto implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Basic(optional = false)
     @Column(name = "nombreproducto")

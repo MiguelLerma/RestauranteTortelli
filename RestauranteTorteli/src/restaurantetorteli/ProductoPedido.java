@@ -19,30 +19,29 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author User
+ * @author Alejandro
  */
 @Entity
 @Table(name = "producto_pedido")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "ProductoPedido.findAll", query = "SELECT p FROM ProductoPedido p")
-    , @NamedQuery(name = "ProductoPedido.findByProductoProductoid", query = "SELECT p FROM ProductoPedido p WHERE p.productoPedidoPK.productoProductoid = :productoProductoid")
-    , @NamedQuery(name = "ProductoPedido.findByPedidoIdpedido", query = "SELECT p FROM ProductoPedido p WHERE p.productoPedidoPK.pedidoIdpedido = :pedidoIdpedido")
-    , @NamedQuery(name = "ProductoPedido.findByCantidad", query = "SELECT p FROM ProductoPedido p WHERE p.cantidad = :cantidad")})
+    @NamedQuery(name = "ProductoPedido.findAll", query = "SELECT p FROM ProductoPedido p"),
+    @NamedQuery(name = "ProductoPedido.findByProductoProductoid", query = "SELECT p FROM ProductoPedido p WHERE p.productoPedidoPK.productoProductoid = :productoProductoid"),
+    @NamedQuery(name = "ProductoPedido.findByPedidoIdpedido", query = "SELECT p FROM ProductoPedido p WHERE p.productoPedidoPK.pedidoIdpedido = :pedidoIdpedido"),
+    @NamedQuery(name = "ProductoPedido.findByCantidad", query = "SELECT p FROM ProductoPedido p WHERE p.cantidad = :cantidad")})
 public class ProductoPedido implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected ProductoPedidoPK productoPedidoPK;
     @Basic(optional = false)
     @Column(name = "cantidad")
     private int cantidad;
-    @JoinColumn(name = "pedido_idpedido", referencedColumnName = "idpedido", insertable = false, updatable = false)
-    @ManyToOne(optional = false)
-    private Pedido pedido;
     @JoinColumn(name = "producto_productoid", referencedColumnName = "productoid", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Producto producto;
+    @JoinColumn(name = "pedido_idpedido", referencedColumnName = "idpedido", insertable = false, updatable = false)
+    @ManyToOne(optional = false)
+    private Pedido pedido;
 
     public ProductoPedido() {
     }
@@ -76,20 +75,20 @@ public class ProductoPedido implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public Pedido getPedido() {
-        return pedido;
-    }
-
-    public void setPedido(Pedido pedido) {
-        this.pedido = pedido;
-    }
-
     public Producto getProducto() {
         return producto;
     }
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    public Pedido getPedido() {
+        return pedido;
+    }
+
+    public void setPedido(Pedido pedido) {
+        this.pedido = pedido;
     }
 
     @Override

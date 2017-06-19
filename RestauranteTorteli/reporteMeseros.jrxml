@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteMeseros" language="groovy" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="2ec398ce-4a66-47fa-899b-c80f4be526a0">
+	<property name="net.sf.jasperreports.chart.pie.ignore.duplicated.key" value="true"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="mes" class="java.lang.String"/>
+	<field name="mesero" class="java.lang.String"/>
+	<field name="venta" class="java.lang.Integer"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="173" splitType="Stretch">
+			<image>
+				<reportElement x="204" y="17" width="357" height="156" uuid="3535d021-b0f3-4ed4-a9aa-720b8dd14312"/>
+				<imageExpression><![CDATA["/Users/Alejandro/Downloads/zztorteli.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="62" splitType="Stretch">
+			<staticText>
+				<reportElement x="180" y="24" width="226" height="38" uuid="0fa51984-19fa-430f-a0a2-3c86e8d16db0"/>
+				<textElement>
+					<font size="24"/>
+				</textElement>
+				<text><![CDATA[Mesero del mes]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="240" y="27" width="100" height="20" uuid="315c5a28-0925-400f-b997-0e8414f91f32"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Mesero]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="27" width="100" height="20" uuid="3f5561e8-9e09-457b-8fb3-f299a531d77b"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Mes]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="393" y="27" width="100" height="20" uuid="4ddaa630-b714-4c19-b4a2-82dcf5f38cf0"/>
+				<textElement>
+					<font size="16"/>
+				</textElement>
+				<text><![CDATA[Venta]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="73" splitType="Stretch">
+			<textField>
+				<reportElement x="393" y="37" width="100" height="20" uuid="c22e9a75-928d-4334-bc11-fdbba851b59e"/>
+				<textFieldExpression><![CDATA[$F{venta}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="240" y="37" width="100" height="20" uuid="fb1703b1-4a56-4b45-be95-6752165435bc"/>
+				<textFieldExpression><![CDATA[$F{mesero}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="80" y="37" width="100" height="20" uuid="4ea27cd0-0de2-4ded-9726-3d11ef3ce72b"/>
+				<textFieldExpression><![CDATA[$F{mes}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="274" splitType="Stretch">
+			<pieChart>
+				<chart>
+					<reportElement x="191" y="34" width="334" height="225" uuid="6b443fcc-c614-40c7-92a6-749cf840c0cf"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{mesero}]]></keyExpression>
+					<valueExpression><![CDATA[$F{venta}]]></valueExpression>
+					<labelExpression><![CDATA[$F{venta}+"-"+$F{mesero}]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
+</jasperReport>

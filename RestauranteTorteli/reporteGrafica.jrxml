@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteGrafica" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="bad3a83c-4a30-44f5-bb78-46ae9df19369">
+	<property name="net.sf.jasperreports.chart.pie.ignore.duplicated.key" value="true"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="198"/>
+	<field name="nombre" class="java.lang.String"/>
+	<field name="id" class="java.lang.String"/>
+	<field name="consola" class="java.lang.String"/>
+	<variable name="consola_1" class="java.lang.Integer" calculation="Count">
+		<variableExpression><![CDATA[$F{consola}]]></variableExpression>
+	</variable>
+	<group name="consolas">
+		<groupExpression><![CDATA[$F{consola}]]></groupExpression>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="229" y="27" width="156" height="20" uuid="964b4557-7723-49c8-80cc-b5c06e59e329"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Reporte Ejemplo]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="60" splitType="Stretch">
+			<staticText>
+				<reportElement x="85" y="1" width="100" height="20" uuid="f0425ebe-4f2f-4c50-a19e-60d6df5fae13"/>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="229" y="1" width="100" height="20" uuid="b1477d28-8d18-4a8c-b9fa-cfdaba045f68"/>
+				<text><![CDATA[Cuantos]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="385" y="1" width="100" height="20" uuid="9c5cc43e-f8b9-451b-b275-3f858101b054"/>
+				<text><![CDATA[Consola]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch"/>
+	</detail>
+	<columnFooter>
+		<band height="42" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="73" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="243" splitType="Stretch">
+			<pieChart>
+				<chart>
+					<reportElement x="284" y="0" width="271" height="209" uuid="58ed75cf-6a19-4f65-ba23-a6cd3e7fd2e2"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{consola}]]></keyExpression>
+					<valueExpression><![CDATA[$V{consolas_COUNT}]]></valueExpression>
+					<labelExpression><![CDATA[$F{consola}+" - "+$V{consolas_COUNT}]]></labelExpression>
+				</pieDataset>
+				<piePlot>
+					<plot/>
+					<itemLabel/>
+				</piePlot>
+			</pieChart>
+			<barChart>
+				<chart>
+					<reportElement x="29" y="71" width="200" height="100" uuid="76cdeab9-8786-4100-a8de-f287cbbaa700"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{consola}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{consola}]]></categoryExpression>
+						<valueExpression><![CDATA[$V{consolas_COUNT}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+			<textField>
+				<reportElement x="133" y="194" width="100" height="20" uuid="d380da38-c5d1-42ca-8c67-7ba2e1d90836"/>
+				<textFieldExpression><![CDATA[$V{consolas_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

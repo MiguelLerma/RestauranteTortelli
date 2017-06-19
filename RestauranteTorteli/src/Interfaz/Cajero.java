@@ -5,6 +5,8 @@
  */
 package Interfaz;
 
+import Log.Log;
+
 /**
  *
  * @author Alejandro
@@ -14,8 +16,11 @@ public class Cajero extends javax.swing.JFrame {
     /**
      * Creates new form Cajero
      */
-    public Cajero() {
+    
+    int idUsuarioI = 0;
+    public Cajero(int idUsuario) {
         initComponents();
+        idUsuarioI = idUsuario;
     }
 
     /**
@@ -29,29 +34,64 @@ public class Cajero extends javax.swing.JFrame {
 
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
+        botonEditarMiinfo = new javax.swing.JButton();
+        botoncrearFactura = new javax.swing.JButton();
+        botonVerFactura = new javax.swing.JButton();
+        botoncerrarSesion = new javax.swing.JButton();
+        Reportes = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 204));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        jLabel1.setFont(new java.awt.Font("Times New Roman", 0, 48)); // NOI18N
         jLabel1.setText("Cajero");
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 10, -1, -1));
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(180, 180, 180)
-                .addComponent(jLabel1)
-                .addContainerGap(185, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(44, 44, 44)
-                .addComponent(jLabel1)
-                .addContainerGap(242, Short.MAX_VALUE))
-        );
+        botonEditarMiinfo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Información-Personal-icono - copia.png"))); // NOI18N
+        botonEditarMiinfo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonEditarMiinfoActionPerformed(evt);
+            }
+        });
+        jPanel1.add(botonEditarMiinfo, new org.netbeans.lib.awtextra.AbsoluteConstraints(46, 278, 124, 124));
+
+        botoncrearFactura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono-adjunta - copia 1.png"))); // NOI18N
+        botoncrearFactura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botoncrearFacturaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(botoncrearFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(46, 116, 124, 124));
+
+        botonVerFactura.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/icono-adjunta - copia 2.png"))); // NOI18N
+        botonVerFactura.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botonVerFacturaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(botonVerFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(263, 116, 124, 124));
+
+        botoncerrarSesion.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/CerrarSesion - copia.jpg"))); // NOI18N
+        botoncerrarSesion.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                botoncerrarSesionActionPerformed(evt);
+            }
+        });
+        jPanel1.add(botoncerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 450, 127, 124));
+
+        Reportes.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Reportes_2014.jpg"))); // NOI18N
+        Reportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ReportesActionPerformed(evt);
+            }
+        });
+        jPanel1.add(Reportes, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 280, 120, 120));
+
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagenes/Verde-Luz-Sólido-Pintura.jpg"))); // NOI18N
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 460, 610));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -61,11 +101,63 @@ public class Cajero extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void botonEditarMiinfoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonEditarMiinfoActionPerformed
+
+         Gerente gerenteUI = new Gerente(0,idUsuarioI);
+                
+                gerenteUI.editarOtroEmpleado(idUsuarioI);
+// TODO add your handling code here:
+    }//GEN-LAST:event_botonEditarMiinfoActionPerformed
+
+    private void botonVerFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botonVerFacturaActionPerformed
+        // TODO add your handling code here:
+        
+           VerFactura verfacturaUI = new VerFactura();
+                verfacturaUI.setEnabled(true);
+                verfacturaUI.setVisible(true);
+                verfacturaUI.pack();
+    }//GEN-LAST:event_botonVerFacturaActionPerformed
+
+    private void botoncrearFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botoncrearFacturaActionPerformed
+      
+        
+           CrearFactura crearfacturaUI = new CrearFactura();
+                crearfacturaUI.setEnabled(true);
+                crearfacturaUI.setVisible(true);
+                crearfacturaUI.pack();
+
+
+// TODO add your handling code here:
+    }//GEN-LAST:event_botoncrearFacturaActionPerformed
+
+    private void botoncerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_botoncerrarSesionActionPerformed
+
+         Log login = new Log();
+                login.setEnabled(true);
+                login.setVisible(true);
+                login.pack();
+                
+                this.setVisible(false);
+        // TODO add your handling code here:
+    }//GEN-LAST:event_botoncerrarSesionActionPerformed
+
+    private void ReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReportesActionPerformed
+        Reportes reporte = new Reportes();
+        reporte.setEnabled(true);
+        reporte.setVisible(true);
+        reporte.Reporte1.setEnabled(true);
+        reporte.Reporte2.setEnabled(true);
+        reporte.Reporte3.setEnabled(false);
+        reporte.Reporte4.setEnabled(true);
+        reporte.Reporte5.setEnabled(false);
+        reporte.Reporte6.setEnabled(true);
+    }//GEN-LAST:event_ReportesActionPerformed
 
     /**
      * @param args the command line arguments
@@ -97,13 +189,19 @@ public class Cajero extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Cajero().setVisible(true);
+                new Cajero(12).setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton Reportes;
+    private javax.swing.JButton botonEditarMiinfo;
+    private javax.swing.JButton botonVerFactura;
+    private javax.swing.JButton botoncerrarSesion;
+    private javax.swing.JButton botoncrearFactura;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     // End of variables declaration//GEN-END:variables
 }
